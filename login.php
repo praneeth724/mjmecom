@@ -76,6 +76,14 @@ require_once 'includes/header.php';
                     </button>
                 </form>
 
+                <?php
+                /*
+                Demo Accounts:
+                Admin: admin@mrm.com / admin123
+                User: kamal@example.com / user123
+                */
+                ?>
+
                 <div class="auth-footer">
                     Don't have an account? <a href="register.php">Register here</a>
                 </div>

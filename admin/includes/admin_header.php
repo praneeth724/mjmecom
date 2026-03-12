@@ -85,6 +85,7 @@ $adminBase     = SITE_BASE . '/admin/';  // e.g. "/ecomgura/admin/"
             </div>
         </div>
         <div class="admin-content">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="<?= $base ?>js/main.js"></script>
 <style>
 @media(max-width:900px){

@@ -58,25 +58,25 @@ document.addEventListener('DOMContentLoaded', function () {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `action=add&product_id=${productId}&qty=${qty}`
         })
-        .then(r => r.json())
-        .then(data => {
-            btn.innerHTML = originalHtml;
-            btn.disabled = false;
-            if (data.success) {
-                showToast(data.message || 'Added to cart!', 'success');
-                // Update cart badge
-                const badges = document.querySelectorAll('.cart-badge');
-                badges.forEach(b => { b.textContent = data.cart_count; });
-            } else {
-                showToast(data.message || 'Error adding to cart', 'error');
-                if (data.redirect) window.location.href = data.redirect;
-            }
-        })
-        .catch(() => {
-            btn.innerHTML = originalHtml;
-            btn.disabled = false;
-            showToast('Something went wrong', 'error');
-        });
+            .then(r => r.json())
+            .then(data => {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+                if (data.success) {
+                    showToast(data.message || 'Added to cart!', 'success');
+                    // Update cart badge
+                    const badges = document.querySelectorAll('.cart-badge');
+                    badges.forEach(b => { b.textContent = data.cart_count; });
+                } else {
+                    showToast(data.message || 'Error adding to cart', 'error');
+                    if (data.redirect) window.location.href = data.redirect;
+                }
+            })
+            .catch(() => {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+                showToast('Something went wrong', 'error');
+            });
     });
 
     // ===== CART QUANTITY UPDATE =====
@@ -110,17 +110,17 @@ document.addEventListener('DOMContentLoaded', function () {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `action=update&cart_id=${cartId}&qty=${qty}`
         })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                const priceEl = document.querySelector(`.item-subtotal[data-cart-id="${cartId}"]`);
-                if (priceEl) priceEl.textContent = data.subtotal;
-                const totalEl = document.getElementById('cart-total');
-                if (totalEl) totalEl.textContent = data.cart_total;
-                const badges = document.querySelectorAll('.cart-badge');
-                badges.forEach(b => { b.textContent = data.cart_count; });
-            }
-        });
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    const priceEl = document.querySelector(`.item-subtotal[data-cart-id="${cartId}"]`);
+                    if (priceEl) priceEl.textContent = data.subtotal;
+                    const totalEl = document.getElementById('cart-total');
+                    if (totalEl) totalEl.textContent = data.cart_total;
+                    const badges = document.querySelectorAll('.cart-badge');
+                    badges.forEach(b => { b.textContent = data.cart_count; });
+                }
+            });
     }
 
     // ===== REMOVE FROM CART =====
@@ -128,23 +128,34 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.target.closest('.btn-remove')) {
             const btn = e.target.closest('.btn-remove');
             const cartId = btn.dataset.cartId;
-            if (!confirm('Remove this item from cart?')) return;
-            fetch('cart-action.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `action=remove&cart_id=${cartId}`
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    const row = btn.closest('.cart-item');
-                    if (row) row.remove();
-                    const badges = document.querySelectorAll('.cart-badge');
-                    badges.forEach(b => { b.textContent = data.cart_count; });
-                    const totalEl = document.getElementById('cart-total');
-                    if (totalEl) totalEl.textContent = data.cart_total;
-                    showToast('Item removed', 'info');
-                    if (data.cart_count === 0) location.reload();
+            Swal.fire({
+                title: 'Remove item?',
+                text: "Do you want to remove this item from your cart?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#8a92a6',
+                confirmButtonText: 'Yes, remove it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('cart-action.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `action=remove&cart_id=${cartId}`
+                    })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                const row = btn.closest('.cart-item');
+                                if (row) row.remove();
+                                const badges = document.querySelectorAll('.cart-badge');
+                                badges.forEach(b => { b.textContent = data.cart_count; });
+                                const totalEl = document.getElementById('cart-total');
+                                if (totalEl) totalEl.textContent = data.cart_total;
+                                showToast('Item removed', 'info');
+                                if (data.cart_count === 0) location.reload();
+                            }
+                        });
                 }
             });
         }
@@ -237,9 +248,21 @@ document.addEventListener('DOMContentLoaded', function () {
     // Confirm deletes
     document.querySelectorAll('.confirm-delete').forEach(btn => {
         btn.addEventListener('click', function (e) {
-            if (!confirm('Are you sure you want to delete this? This action cannot be undone.')) {
-                e.preventDefault();
-            }
+            e.preventDefault();
+            const href = this.getAttribute('href') || this.href;
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this! This action cannot be undone.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#8a92a6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = href;
+                }
+            });
         });
     });
 

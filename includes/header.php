@@ -140,4 +140,5 @@ $base        = SITE_BASE . '/';   // e.g. "/ecomgura/"  or  "/"
 </nav>
 
 <div class="toast-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="<?= $base ?>js/main.js" defer></script>
