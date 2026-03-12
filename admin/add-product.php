@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!$error) {
             $stmt = $conn->prepare("INSERT INTO products (name, description, price, sale_price, quantity, category_id, image, is_featured, is_on_sale) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param('ssddiiisi', $name, $description, $price, $salePrice, $quantity, $categoryId, $imageName, $isFeatured, $isOnSale);
+            $stmt->bind_param('ssddiisii', $name, $description, $price, $salePrice, $quantity, $categoryId, $imageName, $isFeatured, $isOnSale);
             if ($stmt->execute()) {
                 header('Location: products.php?updated=1');
                 exit;

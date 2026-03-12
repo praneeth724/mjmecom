@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!$error) {
             $stmt = $conn->prepare("UPDATE products SET name=?, description=?, price=?, sale_price=?, quantity=?, category_id=?, image=?, is_featured=?, is_on_sale=? WHERE id=?");
-            $stmt->bind_param('ssddiiisii', $name, $description, $price, $salePrice, $quantity, $categoryId, $imageName, $isFeatured, $isOnSale, $id);
+            $stmt->bind_param('ssddiisiii', $name, $description, $price, $salePrice, $quantity, $categoryId, $imageName, $isFeatured, $isOnSale, $id);
             if ($stmt->execute()) {
                 header('Location: products.php?updated=1');
                 exit;
